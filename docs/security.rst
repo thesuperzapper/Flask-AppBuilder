@@ -213,6 +213,77 @@ this provider with, **response** is the response.
 
 Take a look at the `example <https://github.com/dpgaspar/Flask-AppBuilder/tree/master/examples/oauth>`_
 
+External Role Mapping
+--------------------
+
+:note: currently we only support mapping external groups into FAB roles with: AUTH_LDAP, AUTH_OAUTH (Okta)
+
+If you have an external source of truth for groups, you might want to have FAB sync user's roles from that system
+as they login.
+
+Here is an example config for LDAP, (Note this is for Okta LDAP, but can be extended to any LDAP provider)::
+
+    # Force users to re-auth after 15min of inactivity
+    # NOTE: this is important to keep roles in sync
+    PERMANENT_SESSION_LIFETIME = 900
+
+    AUTH_USER_REGISTRATION = True
+    AUTH_USER_REGISTRATION_ROLE = "Viewer"
+
+    AUTH_ROLES_SYNC_AT_LOGIN = True
+    AUTH_ROLES_MAPPING = {
+        "cn=User,ou=groups,dc=OKTA_DOMAIN,dc=com": "User",
+        "cn=Admin,ou=groups,dc=OKTA_DOMAIN,dc=com": "Admin",
+    }
+
+    AUTH_TYPE = AUTH_LDAP
+    AUTH_LDAP_SERVER = "ldaps://OKTA_DOMAIN.ldap.okta.com:636"
+    AUTH_LDAP_USE_TLS = False
+
+    AUTH_LDAP_BIND_USER = "uid=bind-admin,dc=OKTA_DOMAIN,dc=okta,dc=com"
+    AUTH_LDAP_BIND_PASSWORD = "xxxxxxxxxxxx"
+
+    AUTH_LDAP_SEARCH = "ou=users,dc=OKTA_DOMAIN,dc=okta,dc=com"
+    AUTH_LDAP_SEARCH_FILTER = "(objectclass=inetOrgPerson)"
+    AUTH_LDAP_APPEND_DOMAIN = "OKTA_DOMAIN.com"
+
+    AUTH_LDAP_UID_FIELD = "uid"
+    AUTH_LDAP_GROUP_FIELD = "memberOf"
+    AUTH_LDAP_FIRSTNAME_FIELD = "givenName"
+    AUTH_LDAP_LASTNAME_FIELD = "sn"
+    AUTH_LDAP_EMAIL_FIELD = "email"
+
+Here is an example config for OAUTH, (Note this is for Okta OAUTH)::
+
+    # Force users to re-auth after 15min of inactivity
+    # NOTE: this is important to keep roles in sync
+    PERMANENT_SESSION_LIFETIME = 900
+
+    AUTH_USER_REGISTRATION = True
+    AUTH_USER_REGISTRATION_ROLE = "Viewer"
+
+    AUTH_ROLES_SYNC_AT_LOGIN = True
+    AUTH_ROLES_MAPPING = {
+        "USER_GROUP_NAME": "User",
+        "ADMIN_GROUP_NAME": "Admin",
+    }
+
+    OAUTH_PROVIDERS = [
+        {
+            "name": "okta",
+            "icon": "fa-circle-o",
+            "token_key": "access_token",
+            "remote_app": {
+                "consumer_key": "OKTA_KEY",
+                "consumer_secret": "OKTA_SECRET",
+                "base_url": "https://OKTA_DOMAIN.okta.com/oauth2/v1/",
+                "request_token_params": {
+                    "scope": "openid profile email groups"
+                },
+                "access_token_url": "https://OKTA_DOMAIN.okta.com/oauth2/v1/token",
+                "authorize_url": "https://OKTA_DOMAIN.okta.com/oauth2/v1/authorize",
+        }
+    ]
 
 Role based
 ----------
