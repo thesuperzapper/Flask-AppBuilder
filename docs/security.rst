@@ -216,7 +216,7 @@ Take a look at the `example <https://github.com/dpgaspar/Flask-AppBuilder/tree/m
 External Role Mapping
 --------------------
 
-:note: currently we only support mapping external groups into FAB roles with: AUTH_LDAP, AUTH_OAUTH (Okta)
+:note: Currently we only support mapping external groups into FAB roles with: AUTH_LDAP, AUTH_OAUTH (Okta)
 
 If you have an external source of truth for groups, you might want to have FAB sync user's roles from that system
 as they login.
@@ -232,8 +232,8 @@ Here is an example config for LDAP, (Note this is for Okta LDAP, but can be exte
 
     AUTH_ROLES_SYNC_AT_LOGIN = True
     AUTH_ROLES_MAPPING = {
-        "cn=User,ou=groups,dc=OKTA_DOMAIN,dc=com": "User",
-        "cn=Admin,ou=groups,dc=OKTA_DOMAIN,dc=com": "Admin",
+        "cn=User,ou=groups,dc=OKTA_DOMAIN,dc=com": ["User"],
+        "cn=Admin,ou=groups,dc=OKTA_DOMAIN,dc=com": ["Admin"],
     }
 
     AUTH_TYPE = AUTH_LDAP
@@ -264,8 +264,8 @@ Here is an example config for OAUTH, (Note this is for Okta OAUTH)::
 
     AUTH_ROLES_SYNC_AT_LOGIN = True
     AUTH_ROLES_MAPPING = {
-        "USER_GROUP_NAME": "User",
-        "ADMIN_GROUP_NAME": "Admin",
+        "USER_GROUP_NAME": ["User"],
+        "ADMIN_GROUP_NAME": ["Admin"],
     }
 
     OAUTH_PROVIDERS = [

@@ -305,24 +305,25 @@ class BaseSecurityManager(AbstractSecurityManager):
     def get_roles_from_keys(self, user_role_keys: List[str]):
         """
         Construct a list of FAB role objects, using AUTH_ROLES_MAPPING
-        to map from a provided list of keys to the true FAB role names.
+        to map from a provided list of keys (e.g. LDAP group DNs) to the true FAB role names.
 
         :param user_role_keys: the list of keys
         :return: a list of RoleModelView
         """
         roles = []
         user_role_keys = set(user_role_keys)
-        for role_key, role_name in self.auth_roles_mapping.items():
+        for role_key, role_names in self.auth_roles_mapping.items():
             if role_key in user_role_keys:
-                role = self.find_role(role_name)
-                if role:
-                    roles.append(role)
-                else:
-                    log.warning(
-                        "Can't find role specified in AUTH_ROLES_MAPPING: {0}".format(
-                            role_name
+                for role_name in role_names:
+                    role = self.find_role(role_name)
+                    if role:
+                        roles.append(role)
+                    else:
+                        log.warning(
+                            "Can't find role specified in AUTH_ROLES_MAPPING: {0}".format(
+                                role_name
+                            )
                         )
-                    )
         return roles
 
     @property

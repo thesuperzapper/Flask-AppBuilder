@@ -211,6 +211,7 @@ class LDAPSearchTestCase(unittest.TestCase):
 
         self.assertIsInstance(user, sm.user_model)
         self.assertEqual(len(sm.get_all_users()), 1)
+        self.assertEqual(user.roles, [sm.find_role("Public")])
         self.assertEqual(user.first_name, "Alice")
         self.assertEqual(user.last_name, "Doe")
         self.assertEqual(user.email, "alice@example.com")
@@ -304,10 +305,9 @@ class LDAPSearchTestCase(unittest.TestCase):
     # role mapping new user self register
     def test_ldapauth_bind_mapping(self):
         self.app.config["AUTH_USER_REGISTRATION"] = True
-        self.app.config["AUTH_USER_REGISTRATION_ROLE"] = "Public"
         self.app.config["AUTH_ROLES_MAPPING"] = {
-            "cn=group,ou=groups,o=test": "User",
-            "cn=admins,ou=groups,o=test": "Admin",
+            "cn=group,ou=groups,o=test": ["User"],
+            "cn=admins,ou=groups,o=test": ["Admin"],
         }
         self.appbuilder = AppBuilder(self.app, self.db.session)
         sm = self.appbuilder.sm
@@ -337,11 +337,46 @@ class LDAPSearchTestCase(unittest.TestCase):
             ],
         )
 
+    # role mapping new user multiple
+    def test_ldapauth_bind_mapping_multiple(self):
+        self.app.config["AUTH_USER_REGISTRATION"] = True
+        self.app.config["AUTH_ROLES_MAPPING"] = {
+            "cn=group,ou=groups,o=test": ["Admin", "User"],
+        }
+        print(self.app.config)
+        self.appbuilder = AppBuilder(self.app, self.db.session)
+        sm = self.appbuilder.sm
+        sm.add_role("User")
+        self.assertEqual(sm.get_all_users(), [])
+
+        log.warn(sm.get_all_roles())
+
+        user = sm.auth_user_ldap("alice", "alicepw")
+
+        self.assertEqual(len(sm.get_all_users()), 1)
+        self.assertIsInstance(user, sm.user_model)
+        self.assertEqual(user.roles, [sm.find_role("Admin"), sm.find_role("Public"), sm.find_role("User")])
+        self.assertEqual(user.first_name, "Alice")
+        self.assertEqual(user.last_name, "Doe")
+        self.assertEqual(user.email, "alice@example.com")
+        self.assertEqual(
+            self.ldapobj.methods_called(with_args=True),
+            [
+                self.initialize_call,
+                self.opt_referrals_call,
+                self.manager_simple_bind_s_call,
+                self.search_s_with_memberof_call,
+                self.alice_simple_bind_s_call,
+                self.manager_simple_bind_s_call,
+                self.search_s_with_memberof_call,
+            ],
+        )
+
     # role mapping login no sync
     def test_ldapauth_login_no_sync(self):
         self.app.config["AUTH_ROLES_MAPPING"] = {
-            "cn=group,ou=groups,o=test": "User",
-            "cn=admins,ou=groups,o=test": "Admin",
+            "cn=group,ou=groups,o=test": ["User"],
+            "cn=admins,ou=groups,o=test": ["Admin"],
         }
         self.appbuilder = AppBuilder(self.app, self.db.session)
         sm = self.appbuilder.sm
@@ -375,8 +410,8 @@ class LDAPSearchTestCase(unittest.TestCase):
     def test_ldapauth_login_sync(self):
         self.app.config["AUTH_ROLES_SYNC_AT_LOGIN"] = True
         self.app.config["AUTH_ROLES_MAPPING"] = {
-            "cn=group,ou=groups,o=test": "User",
-            "cn=admins,ou=groups,o=test": "Admin",
+            "cn=group,ou=groups,o=test": ["User"],
+            "cn=admins,ou=groups,o=test": ["Admin"],
         }
         self.appbuilder = AppBuilder(self.app, self.db.session)
         sm = self.appbuilder.sm
@@ -412,8 +447,8 @@ class LDAPSearchTestCase(unittest.TestCase):
     def test_ldapauth_login_sync_no_change(self):
         self.app.config["AUTH_ROLES_SYNC_AT_LOGIN"] = True
         self.app.config["AUTH_ROLES_MAPPING"] = {
-            "cn=group,ou=groups,o=test": "User",
-            "cn=admins,ou=groups,o=test": "Admin",
+            "cn=group,ou=groups,o=test": ["User"],
+            "cn=admins,ou=groups,o=test": ["Admin"],
         }
         self.appbuilder = AppBuilder(self.app, self.db.session)
         sm = self.appbuilder.sm
