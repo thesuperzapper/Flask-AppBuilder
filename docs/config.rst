@@ -48,6 +48,7 @@ Use config.py to configure the following parameters. By default it will use SQLL
 | AUTH_ROLES_MAPPING                     | A mapping from LDAP/OAUTH group names      |   No      |
 |                                        | to FAB roles                               |           |
 |                                        |                                            |           |
+|                                        | See example under AUTH_LDAP_GROUP_FIELD    |           |
 +----------------------------------------+--------------------------------------------+-----------+
 | AUTH_LDAP_SERVER                       | define your ldap server when AUTH_TYPE=2   |   Cond.   |
 |                                        | example:                                   |           |
@@ -129,7 +130,7 @@ Use config.py to configure the following parameters. By default it will use SQLL
 |                                        |                                            |           |
 |                                        | AUTH_ROLES_MAPPING = {                     |           |
 |                                        |   "cn=User,ou=groups,dc=example,dc=com":   |           |
-|                                        |     "User"                                 |           |
+|                                        |     ["User"]                               |           |
 |                                        | }                                          |           |
 +----------------------------------------+--------------------------------------------+-----------+
 | AUTH_LDAP_FIRSTNAME_FIELD              | sets the field in the ldap directory that  |   No      |

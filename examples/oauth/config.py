@@ -127,11 +127,11 @@ AUTH_ROLES_SYNC_AT_LOGIN = True
 # A mapping from LDAP/OAUTH group names to FAB roles
 AUTH_ROLES_MAPPING = {
     # For OAUTH
-    "USER_GROUP_NAME": "User",
-    "ADMIN_GROUP_NAME": "Admin",
+    "USER_GROUP_NAME": ["User"],
+    "ADMIN_GROUP_NAME": ["Admin"],
     # For LDAP
-    # "cn=User,ou=groups,dc=example,dc=com": "User",
-    # "cn=Admin,ou=groups,dc=example,dc=com": "Admin",
+    # "cn=User,ou=groups,dc=example,dc=com": ["User"],
+    # "cn=Admin,ou=groups,dc=example,dc=com": ["Admin"],
 }
 
 # When using LDAP Auth, setup the ldap server

@@ -242,8 +242,8 @@ Here is an example config for LDAP, (Note this is for Okta LDAP, but can be exte
 
     AUTH_ROLES_SYNC_AT_LOGIN = True
     AUTH_ROLES_MAPPING = {
-        "cn=User,ou=groups,dc=OKTA_DOMAIN,dc=com": "User",
-        "cn=Admin,ou=groups,dc=OKTA_DOMAIN,dc=com": "Admin",
+        "cn=User,ou=groups,dc=OKTA_DOMAIN,dc=com": ["User"],
+        "cn=Admin,ou=groups,dc=OKTA_DOMAIN,dc=com": ["Admin"],
     }
 
     AUTH_TYPE = AUTH_LDAP
@@ -274,8 +274,8 @@ Here is an example config for OAUTH, (Note this is for Okta OAUTH)::
 
     AUTH_ROLES_SYNC_AT_LOGIN = True
     AUTH_ROLES_MAPPING = {
-        "USER_GROUP_NAME": "User",
-        "ADMIN_GROUP_NAME": "Admin",
+        "USER_GROUP_NAME": ["User"],
+        "ADMIN_GROUP_NAME": ["Admin"],
     }
 
     OAUTH_PROVIDERS = [

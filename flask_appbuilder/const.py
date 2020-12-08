@@ -64,7 +64,7 @@ LOGMSG_ERR_SEC_UPD_USER = "Error updating user to database. {0} "
 LOGMSG_WAR_SEC_NO_USER = "No user yet created, use flask fab command to do it."
 """ Warning when app starts if no user exists on db """
 LOGMSG_WAR_SEC_NOLDAP_OBJ = (
-    "User self registration failed no LDAP object found for: {0}"
+    "No LDAP object found for: {0}"
 )
 
 LOGMSG_INF_SEC_ADD_PERMVIEW = "Created Permission View: {0}"
